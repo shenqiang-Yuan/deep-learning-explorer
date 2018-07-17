@@ -18,10 +18,10 @@ from mrcnn.model import log
 import mcoco.coco as coco
 import mextra.utils as extra_utils
 
-%matplotlib inline
-%config IPCompleter.greedy=True
+#%matplotlib inline
+#%config IPCompleter.greedy=True
 
-HOME_DIR = 'deep-learning-explorer'
+HOME_DIR = 'master'
 DATA_DIR = os.path.join(HOME_DIR, "data/shapes")
 WEIGHTS_DIR = os.path.join(HOME_DIR, "data/weights")
 MODEL_DIR = os.path.join(DATA_DIR, "logs")
@@ -109,7 +109,7 @@ elif inititalize_weights_with == "last":
     # Load the last model you trained and continue training
     model.load_weights(model.find_last()[1], by_name=True)
     
-
+print("start training!")
 model.train((dataset_traindataset , dataset_validate, 
             learning_rate=config.LEARNING_RATE, 
             epochs=2,
