@@ -208,7 +208,7 @@ def main(_):
     elif inititalize_weights_with == "last":
     # Load the last model you trained and continue training
         model.load_weights(model.find_last()[1], by_name=True)
-    model.train((dataset_traindataset , dataset_validate, 
+    model.train(dataset_train , dataset_validate, 
             learning_rate=config.LEARNING_RATE, 
             epochs=2,
             layers='heads')
