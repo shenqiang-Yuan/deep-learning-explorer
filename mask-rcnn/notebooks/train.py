@@ -10,6 +10,12 @@ import tensorflow as tf
 import matplotlib
 import matplotlib.pyplot as plt
 
+#cell:
+from tinyenv.flags import flags
+FLAGS = flags()
+# cell_end.
+# Call this first to load the parameters.if you don't used tinymind service,then delete this cell
+
 sys.path.insert(0, '../libraries')
 from mrcnn.config import Config
 import mrcnn.utils as utils
@@ -22,11 +28,11 @@ import mextra.utils as extra_utils
 
 tf.app.flags.DEFINE_string(
     'HOME_DIR',
-    'master',
+    FLAGS.HOME_DIR,
     'the home directory,default value is "master"')
 tf.app.flags.DEFINE_string(
     'DATA_DIR',
-    'master/data/shapes',
+    FLAGS.DATA_DIR,
     'the data directory,default value is "master/data/shapes"')
 tf.app.flags.DEFINE_string(
     'TRAINED_WEIGHTS_DIR',
@@ -45,6 +51,12 @@ tf.app.flags.DEFINE_string(
     'inititalize_weights_with',
     'coco',
     'which dataset is used to acquire the initialize wights,default value is "coco"')
+tf.app.flags.DEFINE_integer(
+    'num_classes', FLAGS.num_class, 'Number of classes to use in the dataset.')
+
+tf.app.flags.DEFINE_float(
+    'learning_rate', FLAGS.learning_rate,
+    'The learning rate used by a polynomial decay learning rate.')
 # HOME_DIR = 'master'
 # DATA_DIR = os.path.join(HOME_DIR, "data/shapes")
 # WEIGHTS_DIR = os.path.join(HOME_DIR, "data/weights")
@@ -112,10 +124,14 @@ class ShapesConfig(Config):
 
     # Aim to allow ROI sampling to pick 33% positive ROIs.
     TRAIN_ROIS_PER_IMAGE = 32
-    LEARNING_RATE = 0.001
     STEPS_PER_EPOCH = 400
 
     VALIDATION_STEPS = STEPS_PER_EPOCH / 20
+    
+    def parse_and_config(self,FLAGS):
+        self.NAME = FLAGS.DATA_DIR.split('/')[-1]
+        self.NUM_CLASSES=FLAGS.num_classes
+        self.LEARNING_RATE = FLAGS.learning_rate
     
 # config = ShapesConfig()
 #config.display()
@@ -145,8 +161,9 @@ model.train((dataset_traindataset , dataset_validate,
             epochs=3, # starts from the previous epoch, so only 1 additional is trained 
             layers="all")
 '''
-FLAGS = tf.app.flags.FLAGS
+
 def main(_):
+    FLAGS = tf.app.flags.FLAGS
     if not FLAGS.DATA_DIR:
         raise ValueError('You must supply the dataset directory with --DATA_DIR')
     COCO_MODEL_PATH = os.path.join(FLAGS.TRAINED_WEIGHTS_DIR, "mask_rcnn_coco.h5")
@@ -176,7 +193,8 @@ def main(_):
 #     rpn_anchor_template = (1, 2, 4, 8, 16) # anchor sizes in pixels
 #     rpn_anchor_scales = tuple(i * (image_size // 16) for i in rpn_anchor_template)
     
-    config = ShapesConfig(FLAGS)
+    config = ShapesConfig()
+    config.parse_and_config(FLAGS)
     model = modellib.MaskRCNN(mode="training", config=config, model_dir=FLAGS.SAVING_MODEL_DIR)
     
     inititalize_weights_with = FLAGS.inititalize_weights_with  # imagenet, coco, or last
