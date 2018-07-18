@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 #cell:
 from tinyenv.flags import flags
-FLAGS = flags()
+_FLAGS = flags()
 # cell_end.
 # Call this first to load the parameters.if you don't used tinymind service,then delete this cell
 
@@ -28,11 +28,11 @@ import mextra.utils as extra_utils
 
 tf.app.flags.DEFINE_string(
     'HOME_DIR',
-    FLAGS.HOME_DIR,
+    _FLAGS.HOME_DIR,
     'the home directory,default value is "master"')
 tf.app.flags.DEFINE_string(
     'DATA_DIR',
-    FLAGS.DATA_DIR,
+    _FLAGS.DATA_DIR,
     'the data directory,default value is "master/data/shapes"')
 tf.app.flags.DEFINE_string(
     'TRAINED_WEIGHTS_DIR',
@@ -52,10 +52,10 @@ tf.app.flags.DEFINE_string(
     'coco',
     'which dataset is used to acquire the initialize wights,default value is "coco"')
 tf.app.flags.DEFINE_integer(
-    'num_classes', FLAGS.num_class, 'Number of classes to use in the dataset.')
+    'num_classes', _FLAGS.num_class, 'Number of classes to use in the dataset.')
 
 tf.app.flags.DEFINE_float(
-    'learning_rate', FLAGS.learning_rate,
+    'learning_rate', _FLAGS.learning_rate,
     'The learning rate used by a polynomial decay learning rate.')
 # HOME_DIR = 'master'
 # DATA_DIR = os.path.join(HOME_DIR, "data/shapes")
