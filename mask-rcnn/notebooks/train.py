@@ -88,7 +88,7 @@ class ShapesConfig(Config):
 
     # Aim to allow ROI sampling to pick 33% positive ROIs.
     TRAIN_ROIS_PER_IMAGE = 32
-
+    LEARNING_RATE = 0.001
     STEPS_PER_EPOCH = 400
 
     VALIDATION_STEPS = STEPS_PER_EPOCH / 20
