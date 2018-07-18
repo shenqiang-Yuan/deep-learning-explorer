@@ -29,18 +29,18 @@ tf.app.flags.DEFINE_string(
     'master/data/shapes',
     'the data directory,default value is "master/data/shapes"')
 tf.app.flags.DEFINE_string(
-    'WEIGHTS_DIR',
-    'master/data/weights',
-    'the data directory,default value is "master/data/weights"')
+    'TRAINED_WEIGHTS_DIR',
+    'master/data/trained_model',
+    'the trained wights data directory,default value is "master/data/trained_model"')
 tf.app.flags.DEFINE_string(
-    'MODEL_DIR',
-    'master/data/shapes/logs',
-    'the data directory,default value is "master/data/shapes/logs"')
+    'SAVING_MODEL_DIR',
+    'master/data/logs',
+    'where the model data is to save,default value is "master/data/logs"')
 
 tf.app.flags.DEFINE_string(
     'COCO_MODEL_PATH',
-    'master/data/weights/mask_rcnn_coco.h5',
-    'the data directory,default value is "master/data/weights/mask_rcnn_coco.h5"')
+    'master/data/trained_model/mask_rcnn_coco.h5',
+    'the data directory,default value is "master/data/trained_model/mask_rcnn_coco.h5"')
 tf.app.flags.DEFINE_string(
     'inititalize_weights_with',
     'coco',
@@ -53,8 +53,8 @@ tf.app.flags.DEFINE_string(
 # # Local path to trained weights file
 # COCO_MODEL_PATH = os.path.join(WEIGHTS_DIR, "mask_rcnn_coco.h5")
 # Download COCO trained weights from Releases if needed
-if not os.path.exists(COCO_MODEL_PATH):
-    utils.download_trained_weights(COCO_MODEL_PATH)
+# if not os.path.exists(COCO_MODEL_PATH):
+#     utils.download_trained_weights(COCO_MODEL_PATH)
 
 def get_ax(rows=1, cols=1, size=8):
     """Return a Matplotlib Axes array to be used in
@@ -147,12 +147,13 @@ model.train((dataset_traindataset , dataset_validate,
 '''
 FLAGS = tf.app.flags.FLAGS
 def main(_):
-    if not FLAGS.dataset_dir:
-        raise ValueError('You must supply the dataset directory with --dataset_dir')
-    if not os.path.exists(FLAGS.COCO_MODEL_PATH):
+    if not FLAGS.DATA_DIR:
+        raise ValueError('You must supply the dataset directory with --DATA_DIR')
+    COCO_MODEL_PATH = os.path.join(FLAGS.TRAINED_WEIGHTS_DIR, "mask_rcnn_coco.h5")
+    if not os.path.exists(COCO_MODEL_PATH):
         utils.download_trained_weights(FLAGS.COCO_MODEL_PATH)
-    config = ShapesConfig(FLAGS)
     
+    DATA_DIR = FLAGS.DATA_DIR
     dataset_train = coco.CocoDataset()
     dataset_train.load_coco(DATA_DIR, subset="shapes_train", year="2018")
     dataset_train.prepare()
@@ -165,16 +166,18 @@ def main(_):
     dataset_test.load_coco(DATA_DIR, subset="shapes_test", year="2018")
     dataset_test.prepare()
     
-    image_ids = np.random.choice(dataset_train.image_ids, 4)
-    for image_id in image_ids:
-        image = dataset_train.load_image(image_id)
-        mask, class_ids = dataset_train.load_mask(image_id)
-        visualize.display_top_masks(image, mask, class_ids, dataset_train.class_names)
+#     image_ids = np.random.choice(dataset_train.image_ids, 4)
+#     for image_id in image_ids:
+#         image = dataset_train.load_image(image_id)
+#         mask, class_ids = dataset_train.load_mask(image_id)
+#         visualize.display_top_masks(image, mask, class_ids, dataset_train.class_names)
 
-    image_size = 64
-    rpn_anchor_template = (1, 2, 4, 8, 16) # anchor sizes in pixels
-    rpn_anchor_scales = tuple(i * (image_size // 16) for i in rpn_anchor_template)
-    model = modellib.MaskRCNN(mode="training", config=config, model_dir=MODEL_DIR)
+#     image_size = 64
+#     rpn_anchor_template = (1, 2, 4, 8, 16) # anchor sizes in pixels
+#     rpn_anchor_scales = tuple(i * (image_size // 16) for i in rpn_anchor_template)
+    
+    config = ShapesConfig(FLAGS)
+    model = modellib.MaskRCNN(mode="training", config=config, model_dir=FLAGS.SAVING_MODEL_DIR)
     
     inititalize_weights_with = FLAGS.inititalize_weights_with  # imagenet, coco, or last
 
