@@ -7,4 +7,4 @@ def save_to_file(file_name, contents):
     fh.write(contents)
     fh.close()
 
-save_to_file(_FLAGS.output_dir+'/mobiles.txt', os.getcwd())
+save_to_file('mobiles.txt', os.getcwd())
