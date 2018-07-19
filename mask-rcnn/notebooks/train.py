@@ -25,7 +25,8 @@ from mrcnn.model import log
 import mcoco.coco as coco
 import mextra.utils as extra_utils
 
-
+print("current work directory:%s" % os.getcwd())
+#sys.chdir("master/")
 tf.app.flags.DEFINE_string(
     'HOME_DIR',
     _FLAGS.HOME_DIR,
