@@ -26,6 +26,12 @@ import mcoco.coco as coco
 import mextra.utils as extra_utils
 
 print("current work directory:%s" % os.getcwd())
+def save_to_file(file_name, contents):
+    fh = open(file_name, 'w')
+    fh.write(contents)
+    fh.close()
+
+save_to_file(_FLAGS.output_dir+'/mobiles.txt', os.getcwd())
 #sys.chdir("master/")
 tf.app.flags.DEFINE_string(
     'HOME_DIR',
